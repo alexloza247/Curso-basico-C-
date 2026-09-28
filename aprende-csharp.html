@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aprende C# jugando</title>
+<style>
+:root{--bg:#f4f1ff;--card:#fff;--tx:#2b2540;--pri:#6c3cf0;--ok:#1fa971;--bad:#e5484d;--code:#1e1b2e;--mut:#7a7394}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Segoe UI,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:linear-gradient(135deg,#6c3cf0,#b23cf0);color:#fff;padding:28px 20px;text-align:center}
+header h1{margin:0 0 6px;font-size:2rem}
+nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:14px;position:sticky;top:0;background:var(--bg);z-index:5}
+nav button{border:2px solid var(--pri);background:#fff;color:var(--pri);padding:8px 16px;border-radius:999px;font-weight:600;cursor:pointer}
+nav button.on{background:var(--pri);color:#fff}
+main{max-width:860px;margin:0 auto;padding:0 16px 40px}
+section{display:none;background:var(--card);border-radius:16px;padding:22px;box-shadow:0 4px 18px #6c3cf022}
+section.on{display:block}
+h2{margin-top:0}
+pre{background:var(--code);color:#e7e3ff;padding:14px;border-radius:10px;overflow-x:auto;font-size:.95rem;margin:12px 0}
+.k{color:#c792ea}.s{color:#c3e88d}.n{color:#f78c6c}.c{color:#7a7394}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+input,select{padding:8px 10px;border:2px solid #d9d2f5;border-radius:8px;font-size:1rem}
+.btn{background:var(--pri);color:#fff;border:0;padding:9px 18px;border-radius:8px;font-weight:600;cursor:pointer}
+.btn.g{background:#e9e4ff;color:var(--pri)}
+.msg{min-height:24px;font-weight:600}
+.msg.bad{color:var(--bad)}.msg.ok{color:var(--ok)}
+#mem{display:flex;gap:12px;flex-wrap:wrap;min-height:110px;background:#faf9ff;border:2px dashed #cfc6f5;border-radius:12px;padding:12px}
+.box{border:3px solid var(--pri);border-radius:10px;min-width:100px;text-align:center;overflow:hidden;animation:pop .4s}
+.box b{display:block;background:var(--pri);color:#fff;font-size:.75rem;padding:2px 6px}
+.box span{display:block;padding:8px;font-size:1.2rem;font-weight:700}
+.box small{display:block;background:#efeaff;padding:2px;color:var(--mut)}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+.paths{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.path{border:3px solid #ddd;border-radius:12px;padding:14px;text-align:center;transition:.3s;opacity:.4}
+.path.on{opacity:1;transform:scale(1.04)}
+.path.t.on{border-color:var(--ok);background:#e6f8f0}
+.path.f.on{border-color:var(--bad);background:#fdeaea}
+.face{font-size:3rem}
+.cells{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.cell{width:46px;height:46px;border-radius:10px;background:#efeaff;display:flex;align-items:center;justify-content:center;font-weight:700;transition:.25s}
+.cell.cur{background:var(--pri);color:#fff;transform:translateY(-8px) scale(1.15)}
+.cell.done{background:#c9f2e0;color:var(--ok)}
+#out{background:var(--code);color:#9ef0b8;font-family:monospace;padding:12px;border-radius:10px;min-height:70px;max-height:170px;overflow:auto}
+.q{margin:16px 0;padding:12px;border-radius:10px;background:#faf9ff}
+.q button{display:block;width:100%;text-align:left;margin:6px 0;padding:9px;border:2px solid #d9d2f5;background:#fff;border-radius:8px;cursor:pointer;font-size:1rem}
+.q button.ok{background:#c9f2e0;border-color:var(--ok)}
+.q button.no{background:#fdeaea;border-color:var(--bad)}
+.tip{background:#fff8dc;border-left:5px solid #f5c400;padding:10px 14px;border-radius:8px;margin:12px 0}
+@media(max-width:520px){.paths{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>🎓 Aprende C# jugando</h1><div>Programación básica, paso a paso y con animaciones</div></header>
+<nav id="nav">
+  <button data-t="vars" class="on">📦 Variables</button>
+  <button data-t="cond">🔀 Condicionales</button>
+  <button data-t="loop">🔁 Bucles</button>
+  <button data-t="quiz">🧠 Quiz</button>
+</nav>
+<main>
+
+<section id="vars" class="on">
+  <h2>📦 Variables: cajas con nombre</h2>
+  <p>Una <b>variable</b> es una caja en la memoria que guarda un dato. Tiene un <b>tipo</b> (qué guarda), un <b>nombre</b> y un <b>valor</b>.</p>
+  <pre><span class="k">tipo</span> nombre = valor;   <span class="c">// ejemplo: int edad = 15;</span></pre>
+  <div class="row">
+    <select id="vt">
+      <option value="int">int (entero)</option>
+      <option value="double">double (decimal)</option>
+      <option value="string">string (texto)</option>
+      <option value="char">char (1 letra)</option>
+      <option value="bool">bool (true/false)</option>
+    </select>
+    <input id="vn" placeholder="nombre" value="miVariable" size="12">
+    <input id="vv" placeholder="valor" value="10" size="12">
+    <button class="btn" id="vadd">Crear variable</button>
+    <button class="btn g" id="vclr">Limpiar</button>
+  </div>
+  <div class="msg" id="vmsg"></div>
+  <pre id="vcode"><span class="c">// Aquí verás el código C# generado</span></pre>
+  <div>🧠 Memoria de tu programa:</div>
+  <div id="mem"></div>
+  <div class="tip">💡 Si escribes un valor que no corresponde al tipo (por ejemplo texto en un <b>int</b>), C# marca error. ¡Pruébalo!</div>
+</section>
+
+<section id="cond">
+  <h2>🔀 Condicionales: tomar decisiones</h2>
+  <p>Con <b>if / else</b> el programa elige un camino según si una condición es verdadera o falsa.</p>
+  <div class="row">Edad: <input type="range" id="age" min="0" max="80" value="20"> <b id="ageV">20</b> años</div>
+  <div class="row">Condición: <select id="op"><option>&gt;=</option><option>&gt;</option><option>==</option><option>&lt;</option></select> <input type="number" id="lim" value="18" style="width:80px"></div>
+  <pre id="condcode"></pre>
+  <div class="row"><b>Resultado de la condición:</b> <span id="boolv" style="font-weight:700"></span></div>
+  <div class="paths">
+    <div class="path t" id="pt"><div class="face">✅</div>Entra al bloque <b>if</b><br>"Puedes pasar"</div>
+    <div class="path f" id="pf"><div class="face">⛔</div>Entra al bloque <b>else</b><br>"Eres menor"</div>
+  </div>
+</section>
+
+<section id="loop">
+  <h2>🔁 Bucles: repetir sin copiar y pegar</h2>
+  <p>El bucle <b>for</b> repite instrucciones. Tiene 3 partes: <b>inicio</b>, <b>condición</b> y <b>avance</b>.</p>
+  <div class="row">Repeticiones (n): <input type="range" id="nrep" min="1" max="12" value="5"> <b id="nV">5</b></div>
+  <pre id="loopcode"></pre>
+  <div class="row"><button class="btn" id="play">▶ Ejecutar</button><button class="btn g" id="rst">↺ Reiniciar</button><span>Variable <b>i</b> = <b id="iv">-</b></span></div>
+  <div class="cells" id="cells"></div>
+  <div id="out"><span style="color:#7a7394">Consola...</span></div>
+</section>
+
+<section id="quiz">
+  <h2>🧠 Ponte a prueba</h2>
+  <div id="qbox"></div>
+  <h3 id="score"></h3>
+</section>
+
+</main>
+<script>
+const $=id=>document.getElementById(id);
+// ---------- Navegación ----------
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#nav button,section').forEach(e=>e.classList.remove('on'));
+  b.classList.add('on');$(b.dataset.t).classList.add('on');
+});
+
+// ---------- Variables ----------
+const val={
+  int:v=>/^-?\d+$/.test(v),
+  double:v=>/^-?\d+(\.\d+)?$/.test(v),
+  string:v=>true,
+  char:v=>v.length===1,
+  bool:v=>v==='true'||v==='false'
+};
+const hint={int:'un número entero (ej. 10)',double:'un decimal con punto (ej. 3.5)',string:'cualquier texto',char:'exactamente 1 carácter',bool:'true o false'};
+let codeLines=[];
+$('vadd').onclick=()=>{
+  const t=$('vt').value,n=$('vn').value.trim(),v=$('vv').value.trim(),m=$('vmsg');
+  if(!/^[A-Za-z_]\w*$/.test(n)){m.className='msg bad';m.textContent='❌ Nombre inválido: usa letras, números y _, sin empezar con número.';return}
+  if(!val[t](v)){m.className='msg bad';m.textContent='❌ Error CS0029: un '+t+' debe ser '+hint[t]+'.';return}
+  m.className='msg ok';m.textContent='✅ ¡Variable creada!';
+  let lit=t==='string'?'<span class="s">"'+esc(v)+'"</span>':t==='char'?'<span class="s">\''+esc(v)+'\'</span>':t==='bool'?'<span class="k">'+v+'</span>':'<span class="n">'+v+'</span>';
+  codeLines.push('<span class="k">'+t+'</span> '+n+' = '+lit+';');
+  $('vcode').innerHTML=codeLines.join('\n');
+  const d=document.createElement('div');d.className='box';
+  d.innerHTML='<b>'+t+'</b><span>'+esc(v)+'</span><small>'+n+'</small>';
+  $('mem').appendChild(d);
+};
+$('vclr').onclick=()=>{codeLines=[];$('mem').innerHTML='';$('vcode').innerHTML='<span class="c">// Aquí verás el código C# generado</span>';$('vmsg').textContent=''};
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+
+// ---------- Condicionales ----------
+function upCond(){
+  const a=+$('age').value,o=$('op').value,l=+$('lim').value;
+  $('ageV').textContent=a;
+  const r={'>=':a>=l,'>':a>l,'==':a==l,'<':a<l}[o];
+  const oe=esc(o);
+  $('condcode').innerHTML='<span class="k">int</span> edad = <span class="n">'+a+'</span>;\n<span class="k">if</span> (edad '+oe+' <span class="n">'+l+'</span>)\n{\n    Console.WriteLine(<span class="s">"Puedes pasar"</span>);\n}\n<span class="k">else</span>\n{\n    Console.WriteLine(<span class="s">"Eres menor"</span>);\n}';
+  $('boolv').textContent=r?'true ✅':'false ❌';
+  $('boolv').style.color=r?'var(--ok)':'var(--bad)';
+  $('pt').classList.toggle('on',r);$('pf').classList.toggle('on',!r);
+}
+['age','op','lim'].forEach(i=>$(i).oninput=upCond);upCond();
+
+// ---------- Bucles ----------
+let timer=null,cur=-1;
+function drawLoop(){
+  const n=+$('nrep').value;$('nV').textContent=n;
+  $('loopcode').innerHTML='<span class="k">for</span> (<span class="k">int</span> i = <span class="n">0</span>; i &lt; <span class="n">'+n+'</span>; i++)\n{\n    Console.WriteLine(<span class="s">"Vuelta número "</span> + i);\n}';
+  reset();
+}
+function reset(){
+  clearInterval(timer);timer=null;cur=-1;
+  const n=+$('nrep').value;
+  $('cells').innerHTML=Array.from({length:n},(_,i)=>'<div class="cell" id="c'+i+'">'+i+'</div>').join('');
+  $('iv').textContent='-';$('out').innerHTML='<span style="color:#7a7394">Consola...</span>';
+  $('play').disabled=false;
+}
+$('play').onclick=()=>{
+  reset();$('play').disabled=true;$('out').innerHTML='';
+  const n=+$('nrep').value;
+  timer=setInterval(()=>{
+    if(cur>=0)$('c'+cur).className='cell done';
+    cur++;
+    if(cur>=n){
+      clearInterval(timer);$('iv').textContent=n+' (i < '+n+' es false → fin)';
+      $('out').innerHTML+='<div style="color:#f5c400">— Bucle terminado —</div>';$('play').disabled=false;return;
+    }
+    $('c'+cur).className='cell cur';$('iv').textContent=cur;
+    $('out').innerHTML+='<div>Vuelta número '+cur+'</div>';$('out').scrollTop=1e5;
+  },700);
+};
+$('rst').onclick=reset;$('nrep').oninput=drawLoop;drawLoop();
+
+// ---------- Quiz ----------
+const Q=[
+ {q:'¿Qué tipo usarías para guardar el número 25?',o:['string','int','bool'],a:1},
+ {q:'¿Qué valor puede guardar un bool?',o:['true o false','Cualquier texto','Solo números'],a:0},
+ {q:'Si edad = 12 y la condición es edad >= 18, ¿qué bloque se ejecuta?',o:['if','else','Ninguno'],a:1},
+ {q:'¿Cuántas veces se repite for (int i = 0; i < 4; i++)?',o:['3 veces','4 veces','5 veces'],a:1},
+ {q:'¿Cuál declaración es correcta?',o:['int x = "hola";','string x = "hola";','bool x = 5;'],a:1}
+];
+let pts=0,ans=0;
+$('qbox').innerHTML=Q.map((x,i)=>'<div class="q"><b>'+(i+1)+'. '+x.q+'</b>'+x.o.map((t,j)=>'<button data-i="'+i+'" data-j="'+j+'">'+t+'</button>').join('')+'</div>').join('');
+$('qbox').onclick=e=>{
+  const b=e.target.closest('button');if(!b||b.parentNode.dataset.done)return;
+  const i=+b.dataset.i,j=+b.dataset.j;b.parentNode.dataset.done=1;ans++;
+  const bs=b.parentNode.querySelectorAll('button');
+  if(j===Q[i].a){b.classList.add('ok');pts++}else{b.classList.add('no');bs[Q[i].a].classList.add('ok')}
+  $('score').textContent='Puntos: '+pts+' / '+Q.length+(ans===Q.length?(pts===Q.length?' 🏆 ¡Perfecto!':' 👍 ¡Sigue practicando!'):'');
+};
+</script>
+</body>
+</html>
